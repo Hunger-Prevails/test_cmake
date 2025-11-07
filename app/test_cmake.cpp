@@ -9,7 +9,6 @@
 # include "json.h"
 
 namespace view = ranges::views;
-using namespace std;
 
 int fib(int x)
 {
@@ -27,30 +26,30 @@ int fib(int x)
 }
 
 int main(int argc, char **argv) {
-	Person person_a("Alice");
-	Person person_b("Bob");
+	person::Person person_a("Alice");
+	person::Person person_b("Bob");
 
 	person_a.greet();
 	person_b.greet();
 
 	Json::Value root;
 
-	root["val"] = 25;
+	cxxopts::Options options("fibo", "Print the fibonacci sequence up to a given number");
 
-	std::ofstream fout("people.json", std::ofstream::binary);
+	options.add_options()("number", "The number to print to", cxxopts::value<int>()->default_value("10"));
 
+	auto args = options.parse(argc, argv);
+
+	for (int x: view::iota(1) | view::take(args["number"].as<int>()))
+	{
+		auto v = fib(x);
+		fmt::print("fib[{}] = {}\n", x, v);
+		root[x] = v;
+	}
+
+	std::ofstream fout("fibonacci.json", std::ofstream::binary);
 	fout << root;
 	fout.close();
 
-	cxxopts::Options options("fibo", "Print the fibonacci sequence up to a value 'n'");
-	options.add_options()("n,value", "The value to print to", cxxopts::value<int>()->default_value("10"));
-
-	auto result = options.parse(argc, argv);
-	auto n = result["value"].as<int>();
-
-	for (int x: view::iota(1) | view::take(n))
-	{
-		fmt::print("fib({}) = {}\n", x, fib(x));
-	}
 	return 0;
 }

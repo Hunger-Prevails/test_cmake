@@ -1,19 +1,18 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
+namespace person {
 
-class Person {
+	class Person {
+		std::string name;
 
-	string name;
+		public:
+			Person(std::string n);
 
-	public:
+			bool has_name();
 
-		Person(string n);
+			std::string get_name();
 
-		bool has_name();
-
-		string get_name();
-
-		void greet();
-};
+			void greet();
+	};
+}
